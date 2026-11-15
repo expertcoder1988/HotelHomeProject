@@ -1,0 +1,646 @@
+﻿@using HotelWebsite.Models;
+
+@{
+    ViewBag.Title = "The Sarai Hotel at Naran | Available Rooms";
+    ViewBag.keywords = "Hotel at Naran";
+
+    ViewBag.Description = "The Sarai Hotel at Naran is the best place to stay. Our hotel in Naran Pakistan offers luxurious rooms, equipped with all the amenities. Book Online.";
+
+
+    List<HotelWebsite.Models.PropertySearch> results = new List<HotelWebsite.Models.PropertySearch>();
+
+    string _CheckIn = "";// DateTime.Now;
+    string _CheckOut = ""; // DateTime.Now;
+
+    int? _adults = 0;
+    int? _children = 0;
+    int? _NoOfRooms = 0;
+    int? roomPrice = 0;
+    int? _TotalPax = 0;
+    string Params = (string)Session["params"];
+    string[] p = Params.Split('&');
+
+    _CheckIn = Convert.ToString(p[0]);
+    _CheckOut = Convert.ToString(p[1]);
+    _adults = Convert.ToInt32(p[2]);
+    _children = Convert.ToInt32(p[3]);
+    _TotalPax = _adults + _children;
+
+    if (_TotalPax == 0)
+    {
+        _TotalPax = 1;
+    }
+
+    if (Session["results"] != null)
+    {
+        results = (List<HotelWebsite.Models.PropertySearch>)Session["results"];
+    }
+
+}
+
+<style>
+    .value-button {
+        display: inline-block;
+        border: 0px solid #ddd;
+        width: 40px;
+        text-align: center;
+        vertical-align: middle;
+        background: white;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        font-size: 18px;
+        font-weight: bold;
+        color: white;
+    }
+
+    .features li {
+        width: 150px;
+        margin-right: 5px;
+        float: left;
+        list-style: none;
+    }
+
+    .roomm-price {
+        font-size: 25px !important;
+        font-family: 'Oswald', sans-serif;
+        color: #0073b7;
+        text-transform: uppercase;
+    }
+
+    .value-button:hover {
+        cursor: pointer
+    }
+    div.sticky {
+        position: fixed;
+        background-color: mintcream;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        font-size: 10px;
+        z-index: 2147483647;
+        display: block;
+        width: 77%;
+        height: 100px;
+        border-style: inset;
+        text-align: center;
+    }
+</style>
+
+<link href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"
+      rel="stylesheet">
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<script src="~/Scripts/RoomCarousel.js"></script>
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+    var value = 0;
+    var totalAmount = 0;
+    var DiscountedAmount = 0
+
+    $j(function () {
+
+        $j("input[name='RemoveRooms']").hide();
+
+        $j("input[name='CalculateMinus']").on('click', function (e) {
+            var id = ($j(this).data("value"));
+            //alert(id);
+            if ($j('#txtQuatntity_' + id).val() > 1) {
+                value = parseInt($j('#txtQuatntity_' + id).val() - 1);
+                $j('#txtQuatntity_' + id).val(value);
+                totalAmount = parseInt($j('#hdNormalPrice_' + id).val() * value);
+                $("#spNormalPrice_" + id).html(totalAmount);
+                DiscountedAmount = parseInt($j('#hdDiscountedPrice_' + id).val() * value);
+                $("#spDiscountedPRice_" + id).html(DiscountedAmount);
+            }
+            Calculate(id);
+        });
+
+        $j("input[name='CalculatePlus']").on('click', function (e) {
+            var id = ($j(this).data("value"));
+            var _NoOfRoomsLeft = $j('#NoOfRoomsLeft_' + id).val();
+            if ($j('#txtQuatntity_' + id).val() < parseInt(_NoOfRoomsLeft)) {
+                value = parseInt($j('#txtQuatntity_' + id).val()) + 1;
+                $j('#txtQuatntity_' + id).val(value);
+                totalAmount = parseInt($j('#hdNormalPrice_' + id).val() * value);
+                $("#spNormalPrice_" + id).html(totalAmount);
+                DiscountedAmount = parseInt($j('#hdDiscountedPrice_' + id).val() * value);
+                $("#spDiscountedPRice_" + id).html(DiscountedAmount);
+            }
+
+            Calculate(id);
+        });
+
+        $j("input[name='ShowDetails']").click(function () {
+            var _id = $j(this).attr('id');
+            _id = _id.split('_');
+            _id = _id[1];
+
+            $j("#SelectRoom_" + _id).prop("checked", true);
+            $j("#RemoveRooms_" + _id).show();
+            Calculate(_id);
+        });
+
+        $j("input[name='RemoveRooms']").click(function () {
+            var _id = $j(this).attr('id');
+            _id = _id.split('_');
+            _id = _id[1];
+
+            $j("#SelectRoom_" + _id).prop("checked", false);
+
+            Calculate(_id);
+            $j("#RemoveRooms_" + _id).hide();
+        });
+
+        function Calculate(_id) {
+            //var i = 0;
+            var TotalRooms = 0;
+            var GrandTotal = 0;
+            var RoomCate = "";
+            var _RoomCateRoomNums = '';
+            var _RatePlanID = '';
+            var _RoomRates = '';
+            var flag = 0;
+
+            $j('input[type=checkbox]:checked').each(function (index) {
+                if (this.checked) {
+                    var _Id = $j(this).attr('id');
+                    _Id = _Id.split('_');
+                    _Id = _Id[1];
+                    var _roomCate = $j('#hdRoomCate_' + _Id).val();
+                    //alert(_roomCate);
+                    //  _roomCate = _roomCate.split('_');
+                    //  _roomCate = _roomCate[1];
+
+                    var roomCateRoomNums = $j('#txtQuatntity_' + _Id).val();
+                    //roomCateRoomNums = roomCateRoomNums.split('_');
+                    //roomCateRoomNums = roomCateRoomNums[1];
+
+                    _RoomRates = _RoomRates + ',' + $j('#hdDiscountedPrice_' + _Id).val();
+
+                    var _ratePlanID = $j('#RatePlanID_' + _Id).attr('id');
+                    _ratePlanID = _ratePlanID.split('_');
+                    _ratePlanID = _ratePlanID[1];
+                    _RatePlanID = _RatePlanID + "," + _ratePlanID;
+
+                    TotalRooms = TotalRooms + parseInt($j("#txtQuatntity_" + _Id).val());
+                    GrandTotal = GrandTotal + parseInt($j("#spDiscountedPRice_" + _Id).html());
+                    RoomCate = RoomCate + "," + _roomCate;
+                    _RoomCateRoomNums = _RoomCateRoomNums + "," + roomCateRoomNums;
+
+                    // console.log(GrandTotal);
+                    $j('#RatePlanIDs').val(_RatePlanID);
+                    $j('#hdTotalRooms').val(TotalRooms);
+                    $j('#hdTotalAmount').val(GrandTotal);
+                    $j('#_TotalRooms').html(TotalRooms);
+                    $j('#_TotalAmount').html(GrandTotal);
+                    $j('#_TotalRooms1').html(TotalRooms);
+                    $j('#_TotalAmount1').html(GrandTotal);
+                    $j('#RoomCatCode').val(RoomCate);
+                    $j('#RoomCateRoomNums').val(_RoomCateRoomNums);
+                    $j('#RoomRates').val(_RoomRates);
+                    //     console.log($j('#RoomRates').val());
+                    // console.log($j('#hdTotalAmount').val());
+                    flag = 1;
+                    if (GrandTotal == 0) {
+                        alert("Please select atleast one room.")
+                    }
+                    else {
+                        //  $('#myModal').modal('show');
+                        $j("#sticky").show();
+                    }
+                }
+                else if (this.checked == false) {
+                    flag = 0;
+                }
+
+
+            });
+            if (flag == 0) {
+                //alert("Please select atleast one room.")
+                $j('#hdTotalRooms').val(0);
+                $j('#hdTotalAmount').val(0);
+                $j('#_TotalRooms').html(TotalRooms);
+                $j('#_TotalAmount').html(GrandTotal);
+                $j('#_TotalRooms1').html(TotalRooms);
+                $j('#_TotalAmount1').html(GrandTotal);
+                $j("#sticky").hide();
+            }
+
+        }
+
+
+        $('#OpenModal').click(function () {
+            $('#myModal').modal('show');
+            $("#sticky").hide();
+        });
+
+        $('#closemodal').click(function () {
+            $('#myModal').modal('hide');
+            $("#sticky").show();
+        });
+
+        $('#closepicmodal').click(function () {
+            $('#carouselModal').modal('hide');
+        });
+
+        $('#closepolicymodal').click(function () {
+            $('#policyModal').hide();
+        });
+
+        $j("#dvPolicy a").click(function () {
+
+            var _id = $j(this).attr('id');
+            _id = _id.split('_');
+            _id = _id[1];
+
+            try {
+                $.ajax({
+                    url: '/SearchResult/RoomPolicy',
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: '&CancellationPolicy=' + _id,
+                    success: function (data) {
+                        $("#policyName").empty();
+                        $("#Breakfst").empty();
+                        $("#CancellationPolicy").empty();
+                        $("#FreeCancelBefore").empty();
+                        $("#GuestChargedForCancellation").empty();
+                        $("#ChargedForNoShow").empty();
+                        // alert(_id)
+                        // console.log(data);
+                        if (data.length > 0) {
+                            $.each(data, function (i, item) {
+                                if (i == 0) {
+                                    $("#policyName").append(item.RatePlanName);
+
+                                    if (item.Breakfst == 1) {
+                                        $("#Breakfst").append("Included");
+                                    }
+                                    else {
+                                        $("#Breakfst").append("Not Included");
+                                    }
+
+                                    $("#CancellationPolicy").append(item.CancellationPolicy);
+
+                                    if (item.ChargedForNoShow == 1) {
+                                        $("#ChargedForNoShow").append("Same as the cancellation fee");
+                                    }
+                                    else {
+                                        $("#ChargedForNoShow").append("100% of the total price");
+                                    }
+
+                                    if (item.FreeCancelBefore == 1) {
+                                        $("#FreeCancelBefore").append("The cost of the first night");
+                                    }
+                                    else if (item.FreeCancelBefore == 2) {
+                                        $("#FreeCancelBefore").append("50% of the total price");
+                                    }
+                                    else {
+                                        $("#FreeCancelBefore").append("100% of the total price");
+                                    }
+
+
+                                    if (item.HowlongFreeOfCharge == 1) {
+                                        $("#GuestChargedForCancellation").append("until 6:00PM on the day of arrival");
+                                    }
+                                    else if (item.HowlongFreeOfCharge == 2) {
+                                        $("#GuestChargedForCancellation").append("until 2:00PM on the day of arrival");
+                                    }
+                                    else if (item.HowlongFreeOfCharge == 3) {
+                                        $("#GuestChargedForCancellation").append("until 1 day before arrival");
+                                    }
+                                    else if (item.HowlongFreeOfCharge == 4) {
+                                        $("#GuestChargedForCancellation").append("until 2 days before arrival");
+                                    }
+                                    else if (item.HowlongFreeOfCharge == 5) {
+                                        $("#GuestChargedForCancellation").append("until 3 days before arrival");
+                                    }
+                                    else if (item.HowlongFreeOfCharge == 6) {
+                                        $("#GuestChargedForCancellation").append("until 5 days before arrival");
+                                    }
+                                    else if (item.HowlongFreeOfCharge == 7) {
+                                        $("#GuestChargedForCancellation").append("until 7 days before arrival");
+                                    }
+                                    else if (item.HowlongFreeOfCharge == 8) {
+                                        $("#GuestChargedForCancellation").append("until 14 days before arrival");
+                                    }
+                                    else if (item.HowlongFreeOfCharge == 9) {
+                                        $("#GuestChargedForCancellation").append("until 21 days before arrival");
+                                    }
+                                    else if (item.HowlongFreeOfCharge == 10) {
+                                        $("#GuestChargedForCancellation").append("until 28 days before arrival");
+                                    }
+                                    else if (item.HowlongFreeOfCharge == 11) {
+                                        $("#GuestChargedForCancellation").append("until 30 days before arrival");
+                                    }
+                                    else if (item.HowlongFreeOfCharge == 12) {
+                                        $("#GuestChargedForCancellation").append("until 42 days before arrival");
+                                    }
+                                    else if (item.HowlongFreeOfCharge == 13) {
+                                        $("#GuestChargedForCancellation").append("until 60 days before arrival");
+                                    }
+                                    else {
+                                        $("#FreeCancelBefore").append("No Free Cancellation");
+                                    }
+
+                                    $j("#policyModal").show();
+                                }
+                            });
+                        }
+                    },
+                    error: function (err) {
+                        alert(err.status + " : " + err.statusText);
+                    }
+
+                });
+            } catch (e) {
+                alert(e.status + " : " + e.statusText);
+                // window.location.href = '/Booking/BookingList';
+            }
+        });
+    });
+</script>
+
+@Html.Partial("Menu")
+
+<div id="content">
+    <div class="container">
+
+        <div class="title1">RESERVATION</div>
+
+        <div class="title2">Easy Boooking Process - Hassle Free Reservation</div>
+
+
+
+        <div id="second-tab-group" class="tabgroup">
+            <div id="tabs2-2">
+
+                @if (results.Count == 0)
+                {
+                    <p>No room available. Please try another dates.</p>
+                }
+                else
+                {
+                    foreach (var item in results)
+                    {
+                        HotelDBEntities2 HDE = new HotelDBEntities2();
+
+                        var rp = (from a in HDE.RoomPictures
+                                  where (a.RoomCode == item.RoomCateCode)
+                                  select new
+                                  {
+                                      ImageName = a.Picture
+                                  }).ToList();
+
+                        if (item.NoOfRooms > 0)
+                        {
+                            string[] features = null;
+                            <div class="room-wide-wrapper">
+                                <div class="room-wide-inner">
+                                    <div class="room-wide clearfix">
+                                        <figure>
+                                            <img src="../uploads/@item.imgURL" alt="" class="img-fluid">
+                                        </figure>
+                                        <div class="caption">
+                                            <div class="room-wide-columns clearfix">
+                                                <div class="room-wide-left">
+                                                    <div class="txt1">
+                                                        159 REVEW
+                                                        <div class="small-stars">
+                                                            <i class="fa fa-star"></i>
+                                                            <i class="fa fa-star"></i>
+                                                            <i class="fa fa-star"></i>
+                                                            <i class="fa fa-star"></i>
+                                                            <i class="fa fa-star"></i>
+                                                        </div>
+                                                    </div>
+                                                    <div class="txt2">@item.RoomCategory</div>
+                                                    <input type="hidden" data-value="@item.Id" id="hdRoomCate_@item.Id" value="@item.RoomCateCode" />
+                                                    <input type="hidden" name="NoOfRoomsLeft" id="NoOfRoomsLeft_@item.Id" value="@item.NoOfRooms" />
+                                                </div>
+                                                <div class="room-wide-right">
+                                                    <div class="room-wide-price">
+                                                        <div class="roomm-price">Rs. <span id="spDiscountedPRice_@item.Id">@item.discountedprice / Night</span></div>
+                                                        <div class="txt4"> Rs. <span id="spNormalPrice_@item.Id" style="text-decoration:line-through">@item.TotalAmount / Night</span><br /></div>
+                                                    </div>
+                                                    <input type="hidden" id="hdNormalPrice_@item.Id" value="@item.TotalAmount" />
+                                                    <input type="hidden" id="hdDiscountedPrice_@item.Id" value="@item.discountedprice" />
+                                                    <input type="hidden" name="RatePlanID" id="RatePlanID_@item.Id" value="@item.rateplanId" />
+                                                </div>
+                                            </div>
+                                            <div class="room-wide-columns clearfix">
+                                                <div class="room-wide-left">
+                                                    <div class="txt5">                                                        
+                                                            <ul class="features">
+                                                                @{
+                                                                    if (item.Features != null)
+                                                                    {
+                                                                        features = item.Features.Split(',');
+
+                                                                        foreach (var itm in features)
+                                                                        {
+                                                                            if (itm != "")
+                                                                            {
+                                                                                <li style="font-size:10px">
+                                                                                    <i class="fa fa-check"></i>
+                                                                                    <span>@itm.Replace('_', ' ')</span>
+                                                                                </li>
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            </ul>
+                                                        <br />
+                                                    </div>
+                                                </div>
+                                                <div class="room-wide-right">
+                                                    <div  id="dvPolicy" class="txt5">
+                                                        Policy: <u><a role="button" name="policy" id="policy_@item.CancellationPolicy">@item.Name</a></u>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="room-wide-columns clearfix">
+                                                <div class="room-wide-left">
+                                                    <div>
+                                                        Add Rooms:
+                                                        <input type="button" ID="CalculateMinus_@item.Id" name="CalculateMinus" data-value="@item.Id" value="-" />
+                                                        <input type="text" value="1" style="width:30px" name="txtQuatntity" ID="txtQuatntity_@item.Id" />
+                                                        <input type="button" data-value="@item.Id" ID="CalculatePlus_@item.Id" name="CalculatePlus" value="+" />
+                                                    </div>
+                                                    <div>
+                                                        <input type="checkbox" style="display:none" name="SelectRoom" id="SelectRoom_@item.Id" value="@item.Id" />
+
+                                                    </div>
+                                                </div>
+                                                <div class="room-wide-right">
+                                                    <input type="button" class="btn btn-danger booking" data-value="@item.Id" style="color:white" name="ShowDetails" id="ShowDetails_@item.Id" value="Reserve This" />
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <div class="room-wide-columns clearfix">
+                                                <div class="room-wide-left">
+                                                    <div class="txt7"><span><a href="#"><i class="fa fa-user"><span> @item.AdultAllowed Adult</span> <span>, @item.NoOfChildAllowed Children</span></i></a></span></div>
+                                                </div>
+                                                <div class="room-wide-right">
+                                                    <div class="txt9">
+                                                        <input type="button" class="btn btn-warning booking" data-value="@item.Id" style="color:white" name="RemoveRooms" id="RemoveRooms_@item.Id" value="Remove This" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="myModal" class="modal">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="title">Booking Form</h4>
+                <button type="button" id="closemodal" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                @*@using (Html.BeginForm("Payment", "Jazzcash", FormMethod.Post, new { autocomplete = "off" }))*@
+                @using (Html.BeginForm("Thankyou", "SearchResult", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="row">
+                        <div class="col-lg-8 col-md-8 col-sm-12">
+                            <div class="form-group">
+                                <select class="form-control" name="PaxTitle" id="PaxTitle">
+                                    <option value="Mr">Mr</option>
+                                    <option value="Mrs">Mrs</option>
+                                    <option value="Miss">Miss</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="PaxFName" name="PaxFName" class="form-control  input" placeholder="First Name">
+                            </div>
+
+                            <div class="form-group">
+                                <input type="text" id="PaxLName" name="PaxLName" class="form-control input" placeholder="Last Name" />
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="PaxPhoneNumber" name="PaxPhoneNumber" class="form-control" placeholder="Phone Number" />
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="PaxEmail" name="PaxEmail" class="form-control" placeholder="Email" />
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="PaxDescription" name="PaxDescription" class="form-control" placeholder="Special Message" />
+                            </div>
+                            <div class="form-group">
+
+                                <input type="hidden" id="hdTotalRooms" name="hdTotalRooms" value="0" />
+                                <input type="hidden" id="hdTotalAmount" name="hdTotalAmount" value="0" />
+                                <input type="hidden" name="CheckIn" value="@_CheckIn" />
+                                <input type="hidden" name="CheckOut" value="@_CheckOut" />
+                                <input type="hidden" name="RoomCatCode" id="RoomCatCode" />
+                                <input type="hidden" name="Adults" value="@_adults" />
+                                <input type="hidden" name="Children" value="@_children" />
+                                <input type="hidden" name="NoOfRooms" value="@_NoOfRooms" />
+                                <input type="hidden" name="RoomRate" value="@roomPrice" />
+                                <input type="hidden" name="RoomCate" id="RoomCate" value="0" />
+                                <input type="hidden" name="RoomCateRoomNums" id="RoomCateRoomNums" />
+                                <input type="hidden" name="RatePlanIDs" id="RatePlanIDs" />
+                                <input type="hidden" name="RoomRates" id="RoomRates" />
+                                <input type="submit" class="btn btn-warning" style="width:100%" value="Book Now" />
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-12">
+                            <h5 style="color:blue">Booking Details</h5>
+                            <span>No. of Rooms: </span><span id="_TotalRooms1"></span><br />
+                            <span>Total Guest: </span><span id="_TotalGuest1">@_TotalPax</span><br />
+                            <span>Total Amount: </span><span id="_TotalAmount1"></span><br />
+
+                        </div>
+                    </div>
+                }
+            </div>
+            <div style="display:none" class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="sticky" id="sticky" style="display:none">
+    <div class="container">
+        <div class="row">            
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <h6 style="color:blue">Booking Details</h6>
+                <span>No. of Rooms: </span><span id="_TotalRooms"></span><br />
+                <span>Total Guest: </span><span id="_TotalGuest">@_TotalPax</span><br />
+                <span>Total Amount: </span><span id="_TotalAmount"></span><br />
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <br />
+                <input type="button" class="btn btn-danger booking" style="color:white" name="OpenModal" id="OpenModal" value="Book Now" />
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="carouselModal" class="modal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="title">Room Pictures</h4>
+                <button type="button" id="closepicmodal" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="banner text-center" id="banner2">
+
+                </div>
+            </div>
+            <div style="display:none" class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="policyModal" class="modal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" id="closepolicymodal" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="banner" id="banner2">
+                    <p><b>Policy: </b> <span id="policyName"></span></p>
+                    <p><b>Breakfast: </b> <span id="Breakfst"></span></p>
+                    <p><b>Cancellation Policy: </b> <span id="CancellationPolicy"></span></p>
+                    <p><b>Free Cancel Before: </b> <span id="FreeCancelBefore"></span></p>
+                    <p><b>Guest Charged For Cancellation: </b> <span id="GuestChargedForCancellation"></span></p>
+                    <p><b>Charged For No-Show: </b> <span id="ChargedForNoShow"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

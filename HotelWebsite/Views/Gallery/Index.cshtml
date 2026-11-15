@@ -1,0 +1,197 @@
+﻿
+@{ ViewBag.Title = "Hotel Gallery | Hotel Home Naran Pictures | Room Photos";
+
+    ViewBag.keywords = "Naran pictures, hotel room pictures, Naran photos, gallery hotel collection, hotel room photos, hotel pictures inside, hotel food pictures";
+    ViewBag.canonical = "https://hotelhome.com.pk/hotel-gallery";
+    ViewBag.Description = "Browse the Hotel Gallery page for a glimpse of Hotel Home Naran pictures. Our Naran Hotel gallery features hotel room photos, food pictures & Naran photos. "; }
+
+@*<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">*@
+
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<style>
+    .gallery-title {
+        font-size: 36px;
+        color: teal;
+        text-align: center;
+        font-weight: 500;
+        margin-bottom: 70px;
+    }
+
+        .gallery-title:after {
+            content: "";
+            position: absolute;
+            width: 7.5%;
+            left: 46.5%;
+            height: 45px;
+            border-bottom: 1px solid teal;
+        }
+
+    .filter-button {
+        margin: 5px;
+        background-color: #f6ae00;
+        border-radius: 5px;
+    }
+
+        .filter-button:hover {
+            background-color: #0073b7;
+            border-radius: 5px;
+        }
+
+    .btn-default:active .filter-button:active {
+        background-color: #f6ae00;
+        color: white;
+    }
+
+    .port-image {
+        width: 100%;
+    }
+
+    .gallery_product {
+        margin-bottom: 30px;
+    }
+
+    .img1 {
+        vertical-align: middle;
+        border-style: none;
+        border-radius: 5px;
+    }
+</style>
+
+<script>
+    // Gallery
+    $(document).ready(function () {
+        $(".filter-button").click(function () {
+            var value = $(this).attr("data-filter");
+
+            if (value == "all") {
+                //$('.filter').removeClass('hidden');
+                $(".filter").show("1000");
+            } else {
+                //            $('.filter[filter-item="'+value+'"]').removeClass('hidden');
+                //            $(".filter").not('.filter[filter-item="'+value+'"]').addClass('hidden');
+                $(".filter")
+                    .not("." + value)
+                    .hide("3000");
+                $(".filter")
+                    .filter("." + value)
+                    .show("3000");
+            }
+        });
+
+        if ($(".filter-button").removeClass("active")) {
+            $(this).removeClass("active");
+        }
+        $(this).addClass("active");
+    });
+
+</script>
+
+<main>
+
+    <div class="hero medium-height jarallax" data-jarallax data-speed="0.2">
+        <img class="jarallax-img" src="../content/paradise/img/Banner.png" alt="best hotel in naran">
+        <div class="wrapper opacity-mask d-flex align-items-center justify-content-center text-center animate_hero" data-opacity-mask="rgba(0, 0, 0, 0.5)">
+            <div class="container">
+                <small class="slide-animated one">Experience the Beauty and Luxury of Hotel Home Naran</small>
+                <h1 class="slide-animated two">Explore Hotel Gallery for the Hotel Home Naran Pictures</h1>
+            </div>
+        </div>
+    </div>
+    <!-- /Background Img Parallax -->
+
+    <div class="container mt-5">
+        <div class="row justify-content-between">
+            <div class="title text-center mb-5">
+                <p>Welcome to the Hotel Gallery page of <a href="https://hotelhome.com/about-hotel-home-naran">Hotel Home Naran!</a> Here, we invite you to indulge in a visual feast of stunning photos of our Naran Hotel and the delectable dishes that we serve. Get a glimpse of Naran's picturesque scenery, our rooms and suites' elegant interiors, and our impeccable hospitality. But that's not all – we also have pictures of our mouthwatering cuisines that will whet your appetite. From irresistible desserts to savory mains, your taste buds are in for a treat at Hotel Home Naran. So indulge in our gallery, and let the images do the talking. Experience the splendor of Hotel Home Naran today!</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container margin_120_95">
+        <div class="isotope-wrapper">
+            <div class="row justify-content-center">
+                <div class="item col-xl-4 col-lg-6 col-mb-6 mb-4">
+                    <div class="item-img" data-cue="slideInUp">
+                        <img src="../content/paradise/img/assets/images/gallery/superdelux.jpeg" alt="hotel in naran" />
+                        <div class="content">
+                            <a data-fslightbox="gallery_1" data-type="image" href="../content/paradise/img/assets/images/gallery/superdelux.jpeg"><i class="bi bi-arrows-angle-expand"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="item col-xl-4 col-lg-6 col-mb-6 mb-4">
+                    <div class="item-img" data-cue="slideInUp">
+                        <img src="../content/paradise/img/assets/images/gallery/galery-7.jpg" alt="hotel in naran" />
+                        <div class="content">
+                            <a data-fslightbox="gallery_1" data-type="image" href="../content/paradise/img/assets/images/gallery/galery-7.jpg"><i class="bi bi-arrows-angle-expand"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="item col-xl-4 col-lg-6 col-mb-6 mb-4">
+                    <div class="item-img" data-cue="slideInUp">
+                        <img src="../content/paradise/img/assets/images/gallery/galery-6.jpg" alt="hotel in naran" />
+                        <div class="content">
+                            <a data-fslightbox="gallery_1" data-type="image" href="../content/paradise/img/assets/images/gallery/galery-6.jpg"><i class="bi bi-arrows-angle-expand"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="item col-xl-4 col-lg-6 col-mb-6 mb-4">
+                    <div class="item-img" data-cue="slideInUp">
+                        <img src="../content/paradise/img/assets/images/gallery/galery-3.jpg" alt="hotel in naran" />
+                        <div class="content">
+                            <a data-fslightbox="gallery_1" data-type="image" href="../content/paradise/img/assets/images/gallery/galery-3.jpg"><i class="bi bi-arrows-angle-expand"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="item col-xl-4 col-lg-6 col-mb-6 mb-4">
+                    <div class="item-img" data-cue="slideInUp">
+                        <img src="../content/paradise/img/assets/images/gallery/superdelux.jpeg" alt="hotel in naran" />
+                        <div class="content">
+                            <a data-fslightbox="gallery_1" data-type="image" href="../content/paradise/img/assets/images/gallery/superdelux.jpeg"><i class="bi bi-arrows-angle-expand"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="item col-xl-4 col-lg-6 mb-4">
+                    <div class="item-img" data-cue="slideInUp">
+                        <img src="../content/paradise/img/assets/images/gallery/galery-2.jpg" alt="hotel in naran" />
+                        <div class="content">
+                            <a data-fslightbox="gallery_1" data-type="image" href="../content/paradise/img/assets/images/gallery/galery-2.jpg"><i class="bi bi-arrows-angle-expand"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="item col-xl-4 col-lg-6 mb-4">
+                    <div class="item-img" data-cue="slideInUp">
+                        <img src="../content/paradise/img/assets/images/gallery/galery-9.jpg" alt="hotel in naran" />
+                        <div class="content">
+                            <a data-fslightbox="gallery_1" data-type="image" href="../content/paradise/img/assets/images/gallery/galery-8.jpg"><i class="bi bi-arrows-angle-expand"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/row -->
+        </div>
+        <!--/isotope-wrapper -->
+
+        @*<div class="pagination__wrapper">
+            <ul class="pagination">
+                <li><a href="#0" class="prev"><i class="bi bi-arrow-left-short"></i></a></li>
+                <li>
+                    <a href="#0" class="active">1</a>
+                </li>
+                <li>
+                    <a href="#0">2</a>
+                </li>
+                <li>
+                    <a href="#0">3</a>
+                </li>
+                <li>
+                    <a href="#0">4</a>
+                </li>
+                <li><a href="#0" class="next"><i class="bi bi-arrow-right-short"></i></a></li>
+            </ul>
+        </div>*@
+        <!-- /pagination -->
+
+    </div>
+    <!--/container -->
+</main>

@@ -1,0 +1,150 @@
+﻿
+@{
+    ViewBag.Title = "AddNewUser";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<script type="text/javascript">
+        function fnCheck() {
+            if ($('#firstName').val() == '') {
+                $('#firstName').css('border-color', 'red');
+                $('#firstName').focus();
+                return false;
+            }
+            if ($('#lastName').val() == '') {
+                $('#lastName').css('border-color', 'red');
+                $('#lastName').focus();
+                return false;
+            }
+            if ($('#userName').val() == '') {
+                $('#userName').css('border-color', 'red');
+                $('#userName').focus();
+                return false;
+            }
+            if ($('#password').val() == '') {
+                $('#password').css('border-color', 'red');
+                $('#password').focus();
+                return false;
+            }
+            if ($('#cPassword').val() == '') {
+                $('#cPassword').css('border-color', 'red');
+                $('#cPassword').focus();
+                return false;
+            }
+            if ($('#txtOwnerEmail').val() == '') {
+                $('#txtOwnerEmail').css('border-color', 'red');
+                $('#txtOwnerEmail').focus();
+                return false;
+            }
+            else {
+                $('#txtOwnerEmail').css('border-color', '');
+                var testEmail = /^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,4}$/i;
+                if (testEmail.test($('#txtOwnerEmail').val())) { }
+                else {
+                    $('#emailvalidation').show();
+                    $('#txtOwnerEmail').css('border-color', 'red');
+                    $('#txtOwnerEmail').focus();
+                    return false;
+                }
+
+            }
+            if ($('#phone').val() == '') {
+                $('#phone').css('border-color', 'red');
+                $('#phone').focus();
+                return false;
+            }
+        }
+        $("#cPassword").change(function () {
+            if ($('#password').val() != $('#cPassword').val()) {
+                $('#msg').val() = "Password and Confirm Password Not Match";
+                $('#cPassword').show();
+                $('#cPassword').css('border-color', 'red');
+                $('#cPassword').focus();
+            }
+        });
+</script>
+
+<div class="box-body">
+    <h3 class="callout callout-info" align="center">User Registration</h3>
+</div>
+
+<div class="box-body">
+    <div class="row">
+        <div class="col-md-3 col-xs-3">
+            <div class="form-group">
+                <label>
+                    First Name :
+                </label>
+                <input type="text" ID="firstName" 
+                             class="form-control" />
+            </div>
+        </div>
+        <div class="col-md-3 col-xs-3">
+            <div class="form-group">
+                <label>Last Name :</label>
+                <input type="text" ID="lastName" 
+                             class="form-control" />
+            </div>
+        </div>
+        <div class="col-md-3 col-xs-3">
+            <div class="form-group">
+                <label>User Name :</label>
+                <input type="text" ID="userName" 
+                             class="form-control" />
+            </div>
+        </div>
+        <div class="col-md-3 col-xs-3">
+            <div class="form-group">
+                <label>Password :</label>
+                <input type="text" ID="password" TextMode="Password" 
+                             class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 col-xs-3">
+            <div class="form-group">
+                <label>Conf Pass:</label>
+                <input type="text" ID="cPassword" TextMode="Password" 
+                             class="form-control" />
+            </div>
+        </div>
+        <div class="col-md-3 col-xs-3">
+            <div class="form-group">
+                <label>Email :</label>
+                <input type="text" ID="txtOwnerEmail" 
+                             class="form-control" />
+            </div>
+        </div>
+        <div class="col-md-3 col-xs-3">
+            <div class="form-group">
+                <label>Phone # :</label>
+                <input type="text" ID="phone" 
+                             class="form-control" />
+            </div>
+        </div>
+        <div class="col-md-3 col-xs-3">
+            <div class="form-group">
+                <label>Address :</label>
+                <input type="text" ID="address"  TextMode="MultiLine"
+                             class="form-control" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="box-body">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                
+
+                <div align="center">
+                    <Button ID="btnAddHotelInfo" class="btn btn-primary" Text="Registered Now" />
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+

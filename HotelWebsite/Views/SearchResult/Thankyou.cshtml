@@ -1,0 +1,233 @@
+﻿@using HotelWebsite.Models
+@{
+    ViewBag.Title = "Booking Receipt";
+
+    List<HotelWebsite.Controllers.FinalBooking> booking = (List<HotelWebsite.Controllers.FinalBooking>)Session["booking"];
+    string confirmationId = Convert.ToString(Session["confirmationId"]);
+
+    //var GrandTotal = booking.Sum(x => x.TotalRoomRate ?? 0);
+
+    string PaxName = "";
+    string _checkin = Convert.ToDateTime(booking[0].CheckIn).ToShortDateString();
+    string _checkout = Convert.ToDateTime(booking[0].CheckOut).ToShortDateString();
+    if (Session["confirmationId"] != null)
+    {
+        PaxName = booking[0].PaxTitle + " " + booking[0].PaxFName + " " + booking[0].PaxLName;
+    }
+    else
+    {
+        confirmationId = "";
+    }
+
+}
+
+<main>
+    <div class="hero medium-height jarallax" data-jarallax data-speed="0.2">
+        <img class="jarallax-img" src="../content/paradise/img/Banner.png" alt="best hotel in naran">
+        <div class="wrapper opacity-mask d-flex align-items-center justify-content-center text-center animate_hero" data-opacity-mask="rgba(0, 0, 0, 0.5)">
+            <div class="container">
+                <small class="slide-animated one">Luxury Hotel Experience</small>
+                <h1 class="slide-animated two">
+                   Booking Confirmation
+                </h1>
+            </div>
+        </div>
+    </div>
+    <!-- /Background Img Parallax -->
+
+        <div class="container margin_120_95">
+            @*@if (TempData["error"] != null)
+            {
+                <div class="row">
+                    <p>@TempData["error"].ToString()</p>
+                </div>
+            }*@
+
+            <i class="fa fa-print" role="button" onclick="PrintElem('dvPrint')" style="font-size:36px"></i>
+            <div id="dvPrint">
+                <div class="row">
+                    <div class="row mb-40">
+                        <div class="col-md-12">
+                            <div class="main-title-2">
+                                <h1><span>Thankyou for your booking!</span></h1>
+                            </div>
+                            <blockquote>
+                                Your Booking Ref.No is @confirmationId Thanks for choosing Hotel Home, your reservation request
+                                has been submitted successfully. Our team will get in touch with you within 24 hours to advise how
+                                to proceed for payment and confirm the booking. You can reach us via below communication channels 24/7
+                                for any further query.
+                                <br />
+                                <br />
+                                <b>Live chat</b>
+                                <br />
+                                <b>Email</b>:  booking@hotelhome.com.pk
+                                <br />
+                                <b>Mobile</b>: +92 310 5481000
+                                <br />
+                                <b>Land Line</b>: +92 997 430380/90
+                                <br />
+                                <b>Website</b>:https://www.hotelhome.com.pk
+                            </blockquote>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div><h3>Reservation Details!</h3></div>
+                    <br />  <br />
+                    <div id="dvSummery" style="font-family: 'Open Sans', sans-serif;">
+                        <div style="border: 2px solid black; padding: 10px; box-shadow: 5px 10px #dddddd; margin-top: 25px; margin-bottom: 25px; padding: 25px;">
+                            <div style="text-align: center">
+                                <img src="../content/paradise/img/hotel_home_logo_1.png"  width="105" height="75" alt="best hotel in naran" />
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-8 col-md-8 col-sm-12">
+                                    Booking Date:
+                                    <span>@DateTime.Now.ToShortDateString()</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    Guest Name:
+                                    <span>@PaxName</span>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    Booking Ref:
+                                    <span>@booking[0].BookingID</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    Phone:
+                                    <span>@booking[0].PaxPhoneNumber</span>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    Tax Reg # 100356500700003
+                                </div>
+                            </div>
+                            <div style="overflow-x:auto;">
+                                <table border="1" style="width:100%">
+                                    <thead>
+                                        <tr style="text-align: center">
+                                            <th>
+                                                Check In
+                                            </th>
+                                            <th>
+                                                Check Out
+                                            </th>
+                                            <th>
+                                                No. Of Nights
+                                            </th>
+                                            <th>
+                                                Rooms
+                                            </th>
+                                            <th>
+                                                Amount
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            foreach (var itm in booking)
+                                            {
+                                                <tr style="text-align: center">
+                                                    <td>
+                                                        <h5>
+                                                            <span>@_checkin</span>
+                                                        </h5>
+                                                    </td>
+                                                    <td>
+                                                        <h5>
+                                                            <span>@_checkout</span>
+                                                        </h5>
+
+                                                    </td>
+                                                    <td>
+                                                        <h5>
+                                                            <span>@itm.NoofDay</span>
+                                                        </h5>
+
+                                                    </td>
+                                                    <td>
+                                                        <h5>
+                                                            <span>@itm.RoomCategory</span>
+                                                        </h5>
+                                                    </td>
+                                                    <td>
+                                                        <h5>
+                                                            <span>@itm.RoomRate</span>
+                                                        </h5>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        <tr>
+                                            <td colspan="4" style="text-align: right">
+                                                <h5>Grand Total (Tax Included):</h5>
+                                            </td>
+                                            <td style="text-align: center">
+                                                <h5>
+                                                    <span>@booking[0].TotalRoomRate</span>
+                                                </h5>
+                                            </td>
+
+                                        </tr>
+                                    <tbody>
+                                </table>
+                            </div>
+                            <div>
+                                <br />
+                                IMPORTANT NOTES:<br />
+                                <ol style="margin-left: 14px;">
+                                    <li style="display:none"><b>This booking will be confirmed after sending 50% payment in advance</b></li>
+                                    <li style="display:none">
+                                        Please transfer the payment to the following bank account and send proof of the payment via
+                                        <b>whatsapp:+92 310 5481000</b> OR <b>email:mountfeasthotel.com</b>
+
+                                        <ul style="margin-left: 40px;">
+                                            <li><b>Account Name:</b> Hotel Home </li>
+                                            <li><b>Bank:</b>  HBL Bank</li>
+                                            <li><b>Account Number:</b>  23017902291403</li>
+                                            <li><b>IBAN:</b>  PK12HABB0023017902291403</li>
+                                            <li><b>Bank Address:</b>  DHA,Sector F,Rawalpindi</li>
+                                        </ul>
+                                    </li>
+                                    <li>Party and loud gathering are not allowed</li>
+                                    <li>Check-in time is 2PM.Guest before 2PM will be entertained in case of room availability.</li>
+                                    <li>.Check-out time is 12(Noon),Guest will be charged fee after this time.</li>
+                                    <li>Any damage to the property will be charged by the guest.</li>
+                                </ol>
+                            </div>
+
+                            <div style="width: 100%; background-color: #efefef; padding: 10px; margin-top: 10px;">
+                                Please contact our customer care team 24/7 at <a href="#" style="color: #95c41f;">+92 310 5481000</a> or <a href="+923105481000" style="color: #95c41f;">+92 332 8571 133</a>
+                            </div>
+                            <div style="width: 100%; background-color: #efefef; padding: 10px; margin-top: 15px;">
+                                Thanks for choosing <a href="https://hotelhome.com/" style="color: #95c41f;">Hotel Home</a>, we wish you a pleasant stay
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+</main>
+<script>
+    function PrintElem(dvPrint) {
+        var mywindow = window.open('', 'PRINT', 'height=600,width=700');
+
+        mywindow.document.write('<html><head><title>' + document.title + '</title>');
+        mywindow.document.write('</head><body >');
+        mywindow.document.write('<h1>' + document.title + '</h1>');
+        mywindow.document.write(document.getElementById(dvPrint).innerHTML);
+        mywindow.document.write('</body></html>');
+
+        mywindow.document.close(); // necessary for IE >= 10
+        mywindow.focus(); // necessary for IE >= 10*/
+
+        mywindow.print();
+        mywindow.close();
+
+        return true;
+    }
+</script>
